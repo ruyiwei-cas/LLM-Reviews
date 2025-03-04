@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>大语言模型分类与差异对比图</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: #d4e8ff;
+            color: #1a3c5e;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #1a3c5e;
+        }
+        
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .left-section {
+            width: 30%;
+            background: #f8f9fa;
+            padding: 15px;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        
+        .right-section {
+            width: 70%;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a3c5e;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #2c5f8e;
+        }
+        
+        .model-category {
+            margin-bottom: 15px;
+        }
+        
+        .category-title {
+            background-color: #2c5f8e;
+            color: white;
+            padding: 6px 10px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .model-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-left: 8px;
+        }
+        
+        .model-item {
+            background-color: white;
+            border: 1px solid #d1d9e6;
+            border-radius: 4px;
+            padding: 8px;
+            flex: 1 0 calc(50% - 12px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .model-name {
+            font-weight: bold;
+            font-size: 13px;
+            color: #1a3c5e;
+            margin-bottom: 3px;
+        }
+        
+        .model-desc {
+            font-size: 11px;
+            color: #555;
+        }
+        
+        .comparison-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+        
+        .radar-chart {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .radar-container {
+            width: 90%;
+            height: 90%;
+            position: relative;
+        }
+        
+        .radar-polygon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .radar-base {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .key-differences {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        
+        .difference-card {
+            flex: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            border-left: 3px solid;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-openai {
+            border-left-color: #10a37f;
+        }
+        
+        .card-deepseek {
+            border-left-color: #4285f4;
+        }
+        
+        .card-anthropic {
+            border-left-color: #8c44f7;
+        }
+        
+        .card-google {
+            border-left-color: #ea4335;
+        }
+        
+        .difference-title {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        
+        .difference-text {
+            font-size: 11px;
+            color: #555;
+            flex: 1;
+        }
+        
+        .footnote {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            font-size: 11px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        
+        /* SVG样式 */
+        .axis-label {
+            font-size: 11px;
+            fill: #555;
+            text-anchor: middle;
+        }
+        
+        .model-path {
+            fill-opacity: 0.2;
+            stroke-width: 2px;
+        }
+        
+        .axis-line {
+            stroke: #ccc;
+            stroke-width: 1;
+        }
+        
+        .ring {
+            fill: none;
+            stroke: #ddd;
+            stroke-width: 1;
+            stroke-dasharray: 3,3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">大语言模型分类与差异对比图</div>
+        <div class="content">
+            <div class="left-section">
+                <div class="section-title">模型分类与概述</div>
+                
+                <div class="model-category">
+                    <div class="category-title">国际领先模型</div>
+                    <div class="model-list">
+                        <div class="model-item">
+                            <div class="model-name">GPT-4o1 (OpenAI)</div>
+                            <div class="model-desc">参数规模约2万亿，上下文窗口128K，强大推理能力与创作能力</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">Claude 3.7 (Anthropic)</div>
+                            <div class="model-desc">参数规模约1.8万亿，上下文200K，出色的指令遵循能力与安全性</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">Gemini 1.5 Pro (Google)</div>
+                            <div class="model-desc">参数规模约1.7万亿，上下文1000K，数据处理与科学推理见长</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">Llama 3.1 (Meta)</div>
+                            <div class="model-desc">开源模型，参数最高到400B，开放性与可定制性强</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="model-category">
+                    <div class="category-title">中国领先模型</div>
+                    <div class="model-list">
+                        <div class="model-item">
+                            <div class="model-name">DeepSeek R1</div>
+                            <div class="model-desc">参数规模约1.3万亿，全新架构，在科研领域超越部分国际模型</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">DeepSeek V3</div>
+                            <div class="model-desc">前代产品，在特定专业领域表现出色，尤其是科研知识</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">GLM-4 (智谱AI)</div>
+                            <div class="model-desc">中文理解深入，本土化能力强，专业领域能力突出</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">文心一言 (百度)</div>
+                            <div class="model-desc">中文语境理解优秀，创作能力强，多模态能力持续提升</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="model-category">
+                    <div class="category-title">特色模型</div>
+                    <div class="model-list">
+                        <div class="model-item">
+                            <div class="model-name">Grok-2 (xAI)</div>
+                            <div class="model-desc">创造性思维突出，回答风格独特，在原创性方面表现优异</div>
+                        </div>
+                        <div class="model-item">
+                            <div class="model-name">Claude 3 Opus</div>
+                            <div class="model-desc">Anthropic最强大模型，长文本处理和复杂任务分析能力出色</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-section">
+                <div class="section-title">能力雷达图与核心差异</div>
+                
+                <div class="comparison-chart">
+                    <div class="radar-chart">
+                        <div class="radar-container">
+                            <svg class="radar-base" viewBox="0 0 400 400">
+                                <!-- 雷达图背景 -->
+                                <circle cx="200" cy="200" r="160" class="ring"></circle>
+                                <circle cx="200" cy="200" r="120" class="ring"></circle>
+                                <circle cx="200" cy="200" r="80" class="ring"></circle>
+                                <circle cx="200" cy="200" r="40" class="ring"></circle>
+                                
+                                <!-- 轴线 -->
+                                <line x1="200" y1="40" x2="200" y2="360" class="axis-line"></line>
+                                <line x1="40" y1="200" x2="360" y2="200" class="axis-line"></line>
+                                <line x1="97.6" y1="97.6" x2="302.4" y2="302.4" class="axis-line"></line>
+                                <line x1="97.6" y1="302.4" x2="302.4" y2="97.6" class="axis-line"></line>
+                                <line x1="200" y1="40" x2="338.6" y2="200" class="axis-line"></line>
+                                <line x1="338.6" y1="200" x2="200" y2="360" class="axis-line"></line>
+                                <line x1="200" y1="360" x2="61.4" y2="200" class="axis-line"></line>
+                                <line x1="61.4" y1="200" x2="200" y2="40" class="axis-line"></line>
+                                
+                                <!-- 轴标签 -->
+                                <text x="200" y="25" class="axis-label">知识广度</text>
+                                <text x="200" y="385" class="axis-label">专业领域深度</text>
+                                <text x="375" y="200" class="axis-label">推理能力</text>
+                                <text x="25" y="200" class="axis-label">多轮对话</text>
+                                <text x="315" y="85" class="axis-label">指令遵循</text>
+                                <text x="85" y="85" class="axis-label">创造性思维</text>
+                                <text x="315" y="315" class="axis-label">长文档处理</text>
+                                <text x="85" y="315" class="axis-label">多模态能力</text>
+                                
+                                <!-- GPT-4o1 -->
+                                <path 
+                                    d="M200,56 L322,120 L338,200 L290,310 L200,328 L130,260 L90,140 L160,70 Z" 
+                                    class="model-path" 
+                                    fill="#10a37f" 
+                                    stroke="#10a37f">
+                                </path>
+                                
+                                <!-- Claude-3.7 -->
+                                <path 
+                                    d="M200,60 L305,125 L320,200 L260,320 L200,336 L120,270 L80,170 L140,60 Z" 
+                                    class="model-path" 
+                                    fill="#8c44f7" 
+                                    stroke="#8c44f7">
+                                </path>
+                                
+                                <!-- Gemini 1.5 -->
+                                <path 
+                                    d="M200,68 L310,130 L325,200 L305,280 L200,315 L110,230 L90,160 L150,80 Z" 
+                                    class="model-path" 
+                                    fill="#ea4335" 
+                                    stroke="#ea4335">
+                                </path>
+                                
+                                <!-- DeepSeek R1 -->
+                                <path 
+                                    d="M200,70 L280,145 L290,200 L290,290 L200,320 L100,240 L85,160 L135,80 Z" 
+                                    class="model-path" 
+                                    fill="#4285f4" 
+                                    stroke="#4285f4">
+                                </path>
+                            </svg>
+                            
+                            <div class="legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #10a37f;"></div>
+                                    <span>GPT-4o1</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #8c44f7;"></div>
+                                    <span>Claude 3.7</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #ea4335;"></div>
+                                    <span>Gemini 1.5 Pro</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background-color: #4285f4;"></div>
+                                    <span>DeepSeek R1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="key-differences">
+                        <div class="difference-card card-openai">
+                            <div class="difference-title">GPT-4o1 (OpenAI)</div>
+                            <div class="difference-text">
+                                <p>• 推理能力最强，尤其在多步骤问题解决上表现卓越</p>
+                                <p>• 创造性较高，生成内容高质且多样化</p>
+                                <p>• 应用场景广泛，通用能力领先</p>
+                                <p>• 多模态理解能力处于领先地位</p>
+                            </div>
+                        </div>
+                        
+                        <div class="difference-card card-deepseek">
+                            <div class="difference-title">DeepSeek R1</div>
+                            <div class="difference-text">
+                                <p>• 在特定科研领域表现突出，专业精度高</p>
+                                <p>• 中文语境理解深入，文化习惯把握准确</p>
+                                <p>• 技术资料和代码生成能力强</p>
+                                <p>• 数据分析表现优秀，推理严谨</p>
+                            </div>
+                        </div>
+                        
+                        <div class="difference-card card-anthropic">
+                            <div class="difference-title">Claude 3.7 (Anthropic)</div>
+                            <div class="difference-text">
+                                <p>• 指令遵循能力顶级，执行准确率高</p>
+                                <p>• 长文档理解和总结能力出色</p>
+                                <p>• 安全性设计更为严谨，输出内容更可控</p>
+                                <p>• 人文科学领域表现较强</p>
+                            </div>
+                        </div>
+                        
+                        <div class="difference-card card-google">
+                            <div class="difference-title">Gemini 1.5 Pro (Google)</div>
+                            <div class="difference-text">
+                                <p>• 超长上下文窗口（100万token）</p>
+                                <p>• 数据处理和分析能力出众</p>
+                                <p>• 科学推理精确度高</p>
+                                <p>• 跨语言能力和多语言支持强大</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footnote">数据截至2025年3月，基于公开测试与官方规格</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

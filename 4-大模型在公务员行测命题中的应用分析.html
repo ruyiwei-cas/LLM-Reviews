@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>大模型在公务员行测命题中的应用分析</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: #d4e8ff;
+            color: #1a3c5e;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #1a3c5e;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 15px;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .section {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .card {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-header {
+            background-color: #2c5f8e;
+            color: white;
+            padding: 10px 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #1a3c5e;
+        }
+        
+        .card-content {
+            padding: 12px;
+            flex: 1;
+            overflow: auto;
+        }
+        
+        .item-types {
+            display: flex;
+            gap: 10px;
+            height: 100%;
+        }
+        
+        .type-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .type-card {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .type-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .type-desc {
+            font-size: 11px;
+            color: #555;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .suitable-models {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+        }
+        
+        .model-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #e6eff7;
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-size: 11px;
+        }
+        
+        .model-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .model-name {
+            flex: 1;
+        }
+        
+        .model-rating {
+            font-weight: bold;
+            color: #1a3c5e;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background-color: #e6eff7;
+            color: #1a3c5e;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+            border: 1px solid #c5d7e7;
+        }
+        
+        .comparison-table td {
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        
+        .comparison-table tr:nth-child(even) td {
+            background-color: #f8f9fa;
+        }
+        
+        .rating-excellent {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .rating-good {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        .rating-average {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .chart-svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+        
+        .legend-color {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .workflow-diagram {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #2c5f8e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #1a3c5e;
+            margin-bottom: 4px;
+        }
+        
+        .step-desc {
+            font-size: 11px;
+            color: #555;
+        }
+        
+        .footnote {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">大模型在公务员行测命题中的应用分析</div>
+        <div class="content">
+            <div class="section" style="flex: 0.9;">
+                <div class="card">
+                    <div class="card-header">行测题型分类与适用模型</div>
+                    <div class="card-content">
+                        <div class="item-types">
+                            <div class="type-card">
+                                <div class="type-icon" style="background-color: #4e73df;">言</div>
+                                <div class="type-title">言语理解与表达</div>
+                                <div class="type-desc">考查对语言文字的理解与运用能力，包括片段阅读、语句表达等</div>
+                                <div class="suitable-models">
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #8c44f7;"></span>
+                                        <span class="model-name">Claude 3.7</span>
+                                        <span class="model-rating">98/100</span>
+                                    </div>
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #10a37f;"></span>
+                                        <span class="model-name">GPT-4o1</span>
+                                        <span class="model-rating">96/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="type-card">
+                                <div class="type-icon" style="background-color: #1cc88a;">数</div>
+                                <div class="type-title">数量关系</div>
+                                <div class="type-desc">考查对数量关系的分析推理能力，包括数字推理、数学运算等</div>
+                                <div class="suitable-models">
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #10a37f;"></span>
+                                        <span class="model-name">GPT-4o1</span>
+                                        <span class="model-rating">97/100</span>
+                                    </div>
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #4285f4;"></span>
+                                        <span class="model-name">DeepSeek V3</span>
+                                        <span class="model-rating">94/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="type-card">
+                                <div class="type-icon" style="background-color: #36b9cc;">判</div>
+                                <div class="type-title">判断推理</div>
+                                <div class="type-desc">考查对事物关系的分析判断能力，包括图形推理、逻辑判断等</div>
+                                <div class="suitable-models">
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #10a37f;"></span>
+                                        <span class="model-name">GPT-4o1</span>
+                                        <span class="model-rating">98/100</span>
+                                    </div>
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #8c44f7;"></span>
+                                        <span class="model-name">Claude 3.7</span>
+                                        <span class="model-rating">97/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="type-card">
+                                <div class="type-icon" style="background-color: #f6c23e;">资</div>
+                                <div class="type-title">资料分析</div>
+                                <div class="type-desc">考查对文字和数据资料的分析加工能力，包括计算、查找、比较、推断等</div>
+                                <div class="suitable-models">
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #ea4335;"></span>
+                                        <span class="model-name">Gemini 1.5 Pro</span>
+                                        <span class="model-rating">95/100</span>
+                                    </div>
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #10a37f;"></span>
+                                        <span class="model-name">GPT-4o1</span>
+                                        <span class="model-rating">96/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="type-card">
+                                <div class="type-icon" style="background-color: #e74a3b;">常</div>
+                                <div class="type-title">常识判断</div>
+                                <div class="type-desc">考查对国情、政治、经济、文化、科技等方面常识的了解程度</div>
+                                <div class="suitable-models">
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #8c44f7;"></span>
+                                        <span class="model-name">Claude 3.7</span>
+                                        <span class="model-rating">96/100</span>
+                                    </div>
+                                    <div class="model-item">
+                                        <span class="model-icon" style="background-color: #4285f4;"></span>
+                                        <span class="model-name">DeepSeek V3</span>
+                                        <span class="model-rating">95/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" style="flex: 1.1;">
+                <div class="card">
+                    <div class="card-header">判断推理细分题型分析</div>
+                    <div class="card-content">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 18%;">细分题型</th>
+                                    <th style="width: 30%;">题型特点</th>
+                                    <th style="width: 12%;">GPT-4o1</th>
+                                    <th style="width: 12%;">Claude 3.7</th>
+                                    <th style="width: 12%;">Gemini 1.5</th>
+                                    <th style="width: 16%;">DeepSeek V3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>图形推理</strong><br>识别图形变换规律</td>
+                                    <td>要求考生识别图形序列的变换规律并选择符合该规律的选项。考查空间思维、抽象思维能力。</td>
+                                    <td class="rating-excellent">卓越 (96/100)<br>规律识别准确，图形推理能力强</td>
+                                    <td class="rating-good">良好 (87/100)<br>基本规律识别能力佳</td>
+                                    <td class="rating-excellent">卓越 (95/100)<br>擅长空间变换</td>
+                                    <td class="rating-good">良好 (89/100)<br>抽象思维能力较强</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>定义判断</strong><br>根据定义选择符合例子</td>
+                                    <td>给出一个概念的定义，要求考生在备选项中找出最符合或最不符合该定义的选项。考查理解与应用能力。</td>
+                                    <td class="rating-excellent">卓越 (95/100)<br>定义理解精准</td>
+                                    <td class="rating-excellent">卓越 (97/100)<br>细致把握定义内涵</td>
+                                    <td class="rating-good">良好 (88/100)<br>细节理解有待提高</td>
+                                    <td class="rating-good">良好 (90/100)<br>理解较为准确</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>类比推理</strong><br>词语或概念间的关系</td>
+                                    <td>给出一组相关的词，要求考生找出与之关系最为相似的一组词。考查分析比较、归纳类比能力。</td>
+                                    <td class="rating-excellent">卓越 (97/100)<br>词语关系识别精准</td>
+                                    <td class="rating-excellent">卓越 (98/100)<br>语义关系把握极佳</td>
+                                    <td class="rating-good">良好 (85/100)<br>基本类比能力佳</td>
+                                    <td class="rating-good">良好 (87/100)<br>关系识别准确</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>逻辑判断</strong><br>演绎推理与逻辑关系</td>
+                                    <td>根据给定的条件，推导出必然结论或排除不可能情况。考查逻辑思维能力和推理能力。</td>
+                                    <td class="rating-excellent">卓越 (99/100)<br>逻辑推理能力极强</td>
+                                    <td class="rating-excellent">卓越 (97/100)<br>条件推理严谨</td>
+                                    <td class="rating-good">良好 (89/100)<br>基本逻辑能力佳</td>
+                                    <td class="rating-excellent">卓越 (95/100)<br>严密推理能力强</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>削弱加强</strong><br>论证结构分析</td>
+                                    <td>分析某一论证的结构，找出最能削弱或加强该论证的选项。考查分析评价能力。</td>
+                                    <td class="rating-excellent">卓越 (96/100)<br>论证分析全面</td>
+                                    <td class="rating-excellent">卓越 (98/100)<br>归纳推理能力极强</td>
+                                    <td class="rating-good">良好 (87/100)<br>评价视角较多</td>
+                                    <td class="rating-good">良好 (88/100)<br>分析论证较为准确</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>假设支持</strong><br>隐含前提识别</td>
+                                    <td>识别论证中的隐含假设，或找出使论证成立所必需的前提。考查抽象思维和分析论证能力。</td>
+                                    <td class="rating-excellent">卓越 (95/100)<br>隐含假设识别准确</td>
+                                    <td class="rating-excellent">卓越 (96/100)<br>前提分析细致</td>
+                                    <td class="rating-average">一般 (83/100)<br>抽象前提分析待提高</td>
+                                    <td class="rating-good">良好 (88/100)<br>逻辑分析能力佳</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>解释推断</strong><br>解释现象或事实</td>
+                                    <td>针对给定现象找出最合理的解释，或从已知事实推断出最可能的结论。考查分析与推理能力。</td>
+                                    <td class="rating-excellent">卓越 (97/100)<br>现象解释全面深入</td>
+                                    <td class="rating-excellent">卓越 (95/100)<br>因果分析能力强</td>
+                                    <td class="rating-good">良好 (88/100)<br>解释合理性佳</td>
+                                    <td class="rating-good">良好 (91/100)<br>推断逻辑性强</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">资料分析题命题水平对比</div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <svg class="chart-svg" viewBox="0 0 480 280">
+                                <!-- 坐标轴 -->
+                                <line x1="70" y1="230" x2="450" y2="230" stroke="#333" stroke-width="1"></line>
+                                <line x1="70" y1="50" x2="70" y2="230" stroke="#333" stroke-width="1"></line>
+                                
+                                <!-- X轴标签 -->
+                                <text x="135" y="250" text-anchor="middle" font-size="11">数据设计</text>
+                                <text x="215" y="250" text-anchor="middle" font-size="11">计算题设计</text>
+                                <text x="295" y="250" text-anchor="middle" font-size="11">比例与比重</text>
+                                <text x="375" y="250" text-anchor="middle" font-size="11">趋势判断</text>
+                                
+                                <!-- Y轴标签 -->
+                                <text x="60" y="230" text-anchor="end" font-size="9">80</text>
+                                <text x="60" y="190" text-anchor="end" font-size="9">85</text>
+                                <text x="60" y="150" text-anchor="end" font-size="9">90</text>
+                                <text x="60" y="110" text-anchor="end" font-size="9">95</text>
+                                <text x="60" y="70" text-anchor="end" font-size="9">100</text>
+                                
+                                <!-- 图表标题 -->
+                                <text x="260" y="25" text-anchor="middle" font-size="12" font-weight="bold">资料分析题设计能力评分</text>
+                                
+                                <!-- GPT-4o1 -->
+                                <rect x="105" y="110" width="20" height="120" fill="#10a37f" opacity="0.8"></rect>
+                                <rect x="185" y="90" width="20" height="140" fill="#10a37f" opacity="0.8"></rect>
+                                <rect x="265" y="105" width="20" height="125" fill="#10a37f" opacity="0.8"></rect>
+                                <rect x="345" y="95" width="20" height="135" fill="#10a37f" opacity="0.8"></rect>
+                                
+                                <!-- Claude 3.7 -->
+                                <rect x="130" y="105" width="20" height="125" fill="#8c44f7" opacity="0.8"></rect>
+                                <rect x="210" y="110" width="20" height="120" fill="#8c44f7" opacity="0.8"></rect>
+                                <rect x="290" y="105" width="20" height="125" fill="#8c44f7" opacity="0.8"></rect>
+                                <rect x="370" y="110" width="20" height="120" fill="#8c44f7" opacity="0.8"></rect>
+                                
+                                <!-- Gemini 1.5 Pro -->
+                                <rect x="155" y="90" width="20" height="140" fill="#ea4335" opacity="0.8"></rect>
+                                <rect x="235" y="110" width="20" height="120" fill="#ea4335" opacity="0.8"></rect>
+                                <rect x="315" y="110" width="20" height="120" fill="#ea4335" opacity="0.8"></rect>
+                                <rect x="395" y="90" width="20" height="140" fill="#ea4335" opacity="0.8"></rect>
+                                
+                                <!-- 辅助线 -->
+                                <line x1="70" y1="230" x2="450" y2="230" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="190" x2="450" y2="190" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="150" x2="450" y2="150" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="110" x2="450" y2="110" stroke="#ccc" stroke-width="0.5"
+								stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="190" x2="450" y2="190" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="150" x2="450" y2="150" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="110" x2="450" y2="110" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                <line x1="70" y1="70" x2="450" y2="70" stroke="#ccc" stroke-width="0.5" stroke-dasharray="3,3"></line>
+                                
+                                <!-- 图例 -->
+                                <rect x="85" y="40" width="10" height="10" fill="#10a37f" opacity="0.8"></rect>
+                                <text x="100" y="48" font-size="9">GPT-4o1</text>
+                                
+                                <rect x="155" y="40" width="10" height="10" fill="#8c44f7" opacity="0.8"></rect>
+                                <text x="170" y="48" font-size="9">Claude 3.7</text>
+                                
+                                <rect x="235" y="40" width="10" height="10" fill="#ea4335" opacity="0.8"></rect>
+                                <text x="250" y="48" font-size="9">Gemini 1.5 Pro</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" style="flex: 1;">
+                <div class="card">
+                    <div class="card-header">多模型协同命题流程</div>
+                    <div class="card-content">
+                        <div class="workflow">
+                            <div class="workflow-diagram">
+                                <svg viewBox="0 0 780 180" width="100%" height="100%">
+                                    <!-- 流程图框架 -->
+                                    <rect x="50" y="70" width="100" height="40" rx="5" fill="#e6eff7" stroke="#2c5f8e" stroke-width="1.5"></rect>
+                                    <rect x="190" y="70" width="100" height="40" rx="5" fill="#e6eff7" stroke="#2c5f8e" stroke-width="1.5"></rect>
+                                    <rect x="330" y="70" width="100" height="40" rx="5" fill="#e6eff7" stroke="#2c5f8e" stroke-width="1.5"></rect>
+                                    <rect x="470" y="70" width="100" height="40" rx="5" fill="#e6eff7" stroke="#2c5f8e" stroke-width="1.5"></rect>
+                                    <rect x="610" y="70" width="100" height="40" rx="5" fill="#e6eff7" stroke="#2c5f8e" stroke-width="1.5"></rect>
+                                    
+                                    <!-- 箭头 -->
+                                    <path d="M150,90 L190,90" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    <path d="M185,85 L190,90 L185,95" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    
+                                    <path d="M290,90 L330,90" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    <path d="M325,85 L330,90 L325,95" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    
+                                    <path d="M430,90 L470,90" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    <path d="M465,85 L470,90 L465,95" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    
+                                    <path d="M570,90 L610,90" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    <path d="M605,85 L610,90 L605,95" stroke="#2c5f8e" stroke-width="1.5" fill="none"></path>
+                                    
+                                    <!-- 流程名称 -->
+                                    <text x="100" y="90" text-anchor="middle" font-size="11" font-weight="bold">需求分析</text>
+                                    <text x="240" y="90" text-anchor="middle" font-size="11" font-weight="bold">主导模型选择</text>
+                                    <text x="380" y="90" text-anchor="middle" font-size="11" font-weight="bold">初始命题生成</text>
+                                    <text x="520" y="90" text-anchor="middle" font-size="11" font-weight="bold">交叉评审优化</text>
+                                    <text x="660" y="90" text-anchor="middle" font-size="11" font-weight="bold">质量把控输出</text>
+                                    
+                                    <!-- 模型推荐 -->
+                                    <rect x="355" y="120" width="50" height="15" rx="3" fill="#10a37f" opacity="0.2" stroke="#10a37f" stroke-width="1"></rect>
+                                    <text x="380" y="130" text-anchor="middle" font-size="8">GPT-4o1</text>
+                                    
+                                    <rect x="355" y="140" width="50" height="15" rx="3" fill="#8c44f7" opacity="0.2" stroke="#8c44f7" stroke-width="1"></rect>
+                                    <text x="380" y="150" text-anchor="middle" font-size="8">Claude 3.7</text>
+                                    
+                                    <rect x="495" y="120" width="50" height="15" rx="3" fill="#ea4335" opacity="0.2" stroke="#ea4335" stroke-width="1"></rect>
+                                    <text x="520" y="130" text-anchor="middle" font-size="8">Gemini 1.5</text>
+                                    
+                                    <rect x="495" y="140" width="50" height="15" rx="3" fill="#4285f4" opacity="0.2" stroke="#4285f4" stroke-width="1"></rect>
+                                    <text x="520" y="150" text-anchor="middle" font-size="8">DeepSeek V3</text>
+                                    
+                                    <!-- 需求分析说明 -->
+                                    <text x="100" y="45" text-anchor="middle" font-size="9" fill="#555">确定题型、难度</text>
+                                    <text x="100" y="55" text-anchor="middle" font-size="9" fill="#555">知识点与区分度要求</text>
+                                    
+                                    <!-- 模型选择说明 -->
+                                    <text x="240" y="45" text-anchor="middle" font-size="9" fill="#555">根据题型特点</text>
+                                    <text x="240" y="55" text-anchor="middle" font-size="9" fill="#555">选择最适合的模型</text>
+                                    
+                                    <!-- 命题生成说明 -->
+                                    <text x="380" y="45" text-anchor="middle" font-size="9" fill="#555">生成初步题目</text>
+                                    <text x="380" y="55" text-anchor="middle" font-size="9" fill="#555">包含答案与解析</text>
+                                    
+                                    <!-- 交叉评审说明 -->
+                                    <text x="520" y="45" text-anchor="middle" font-size="9" fill="#555">其他模型审核</text>
+                                    <text x="520" y="55" text-anchor="middle" font-size="9" fill="#555">提出改进意见</text>
+                                    
+                                    <!-- 质量把控说明 -->
+                                    <text x="660" y="45" text-anchor="middle" font-size="9" fill="#555">人工最终审核</text>
+                                    <text x="660" y="55" text-anchor="middle" font-size="9" fill="#555">形成高质量题目</text>
+                                </svg>
+                            </div>
+                            
+                            <div class="workflow-steps">
+                                <div class="workflow-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <div class="step-title">针对判断推理题的多模型协同命题最佳实践</div>
+                                        <div class="step-desc">逻辑判断类题目优先使用GPT-4o1作为主导模型生成题目框架，再由Claude 3.7对语言表述进行优化，最后由DeepSeek V3对解析的详细度和准确性进行补充完善。</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="workflow-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <div class="step-title">针对资料分析题的多模型协同命题最佳实践</div>
+                                        <div class="step-desc">数据类资料分析题优先使用Gemini 1.5 Pro设计数据表格和基础计算题，由GPT-4o1增加逻辑推理类问题，最后由Claude 3.7优化语言表述和情境设计，确保真实性和教学价值。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">命题应用的关键优势与挑战</div>
+                    <div class="card-content">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>维度</th>
+                                    <th>大模型命题优势</th>
+                                    <th>现存挑战</th>
+                                    <th>解决方案</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>效率提升</strong></td>
+                                    <td>大幅提高命题速度，单次可批量生成多道高质量题目，显著减少人工工作量</td>
+                                    <td>批量生成的题目风格可能过于一致，缺乏差异化</td>
+                                    <td>采用多模型协同策略，组合不同模型的题型风格，引入随机性参数</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>质量控制</strong></td>
+                                    <td>模型可根据严格标准生成符合规范的题目，减少人为错误</td>
+                                    <td>个别专业知识点的准确性可能存在偏差，解析深度有限</td>
+                                    <td>建立专家审核机制，针对特定领域知识进行专项优化和校验</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>多样性</strong></td>
+                                    <td>能生成多种难度、多种类型的题目，覆盖全面</td>
+                                    <td>创新性题型设计能力略显不足，题目变化相对有限</td>
+                                    <td>提供多样化的命题提示词模板，引导模型生成创新题型</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>知识更新</strong></td>
+                                    <td>较强的知识库更新能力，题目内容紧跟时事</td>
+                                    <td>对最新政策法规和专业领域变化的把握有滞后性</td>
+                                    <td>定期更新模型知识库，针对特定领域进行微调训练</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>区分度</strong></td>
+                                    <td>能够精准设计难度梯度，提供良好的考生区分能力</td>
+                                    <td>极高难度和创新型题目的设计能力略显不足</td>
+                                    <td>引入人工与模型协作设计机制，针对高难度题目进行专项优化</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footnote">数据基于2025年3月最新版本大模型的实际命题测试，评分体系采用专业命题人员标准</div>
+        </div>
+    </div>
+</body>
+</html>

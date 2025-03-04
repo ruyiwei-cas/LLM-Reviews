@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>大语言模型技术特点与应用场景对比</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: #d4e8ff;
+            color: #1a3c5e;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #1a3c5e;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 15px;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .row {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .card {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-header {
+            background-color: #2c5f8e;
+            color: white;
+            padding: 10px 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #1a3c5e;
+        }
+        
+        .card-content {
+            padding: 12px;
+            flex: 1;
+            overflow: auto;
+        }
+        
+        .model-comparison {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .model-comparison th {
+            background-color: #e6eff7;
+            color: #1a3c5e;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+            border: 1px solid #c5d7e7;
+            white-space: nowrap;
+        }
+        
+        .model-comparison td {
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+        
+        .model-comparison tr:nth-child(even) td {
+            background-color: #f8f9fa;
+        }
+        
+        .model-comparison tr:hover td {
+            background-color: #edf4fb;
+        }
+        
+        .highlight {
+            background-color: rgba(44, 95, 142, 0.08);
+            font-weight: bold;
+        }
+        
+        .training-method {
+            display: flex;
+            gap: 12px;
+            height: 100%;
+        }
+        
+        .method-card {
+            flex: 1;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .method-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #1a3c5e;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .method-desc {
+            font-size: 11px;
+            color: #555;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .method-desc ul {
+            margin: 5px 0;
+            padding-left: 18px;
+        }
+        
+        .method-desc li {
+            margin-bottom: 3px;
+        }
+        
+        .architecture-diagram {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .arch-svg-container {
+            width: 90%;
+            height: 90%;
+            position: relative;
+        }
+        
+        .applications {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .app-item {
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            flex: 1 0 calc(33.33% - 8px);
+            min-width: calc(33.33% - 8px);
+            max-width: calc(33.33% - 8px);
+        }
+        
+        .app-title {
+            font-weight: bold;
+            font-size: 12px;
+            color: #1a3c5e;
+            margin-bottom: 4px;
+        }
+        
+        .app-models {
+            font-size: 11px;
+            color: #555;
+        }
+        
+        .app-models p {
+            margin: 4px 0;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        
+        .model-icon {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            margin-right: 4px;
+            vertical-align: middle;
+            border-radius: 50%;
+        }
+        
+        .model-badge {
+            display: inline-block;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        
+        .badge-excellent {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-good {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .badge-average {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .footnote {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">大语言模型技术特点与应用场景对比</div>
+        <div class="content">
+            <div class="row" style="flex: 0.8;">
+                <div class="card">
+                    <div class="card-header">主要模型技术参数对比</div>
+                    <div class="card-content">
+                        <table class="model-comparison">
+                            <thead>
+                                <tr>
+                                    <th>模型</th>
+                                    <th>参数规模</th>
+                                    <th>上下文窗口</th>
+                                    <th>训练数据</th>
+                                    <th>特有技术</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1</td>
+                                    <td>约2万亿</td>
+                                    <td>128K tokens</td>
+                                    <td>网络文本、书籍、代码等多源数据，含RLHF训练</td>
+                                    <td>多模态理解、高级推理架构、思维链(CoT)增强</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #8c44f7;"></span>Claude 3.7</td>
+                                    <td>约1.8万亿</td>
+                                    <td>200K tokens</td>
+                                    <td>精选高质量文本，带宪法AI安全导向</td>
+                                    <td>Constitutional AI，对抗训练，偏好校准技术</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #ea4335;"></span>Gemini 1.5 Pro</td>
+                                    <td>约1.7万亿</td>
+                                    <td>1000K tokens <span class="model-badge badge-excellent">最长</span></td>
+                                    <td>多语言、科学、多模态数据集</td>
+                                    <td>Pathways架构，跨模态混合专家技术，混合注意力机制</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #4285f4;"></span>DeepSeek R1</td>
+                                    <td>约1.3万亿</td>
+                                    <td>128K tokens</td>
+                                    <td>科研文献、中英双语语料、代码库、专业领域文档</td>
+                                    <td>科研增强预训练、领域知识图谱融合、代码-文本双向理解技术</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #0668E1;"></span>Llama 3.1</td>
+                                    <td>70B-400B</td>
+                                    <td>128K tokens</td>
+                                    <td>开源语料、多语言数据、代码与科学资料</td>
+                                    <td>开源架构、SFT、DPO优化策略</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="model-icon" style="background-color: #34A853;"></span>DeepSeek V3</td>
+                                    <td>约1.1万亿</td>
+                                    <td>128K tokens</td>
+                                    <td>通用语料库、行业专业资料、双语混合数据</td>
+                                    <td>代码能力优化、增量训练、注意力机制改进</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row" style="flex: 1.1;">
+                <div class="card">
+                    <div class="card-header">训练方法与技术架构</div>
+                    <div class="card-content">
+                        <div class="training-method">
+                            <div class="method-card">
+                                <div class="method-title">预训练 (Pre-training)</div>
+                                <div class="method-desc">
+                                    大量文本数据上训练模型预测下一个token，建立基础语言理解能力。所有模型均采用Transformer架构，但细节各异：
+                                    <ul>
+                                        <li><b>GPT-4o1</b>：采用优化的解码器架构，多头注意力机制</li>
+                                        <li><b>Claude 3.7</b>：类似但注重长程依赖和上下文理解</li>
+                                        <li><b>DeepSeek R1</b>：在科研领域语料上进行额外加强</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="method-card">
+                                <div class="method-title">指令微调 (SFT)</div>
+                                <div class="method-desc">
+                                    使用高质量人工编写的指令-回应对，教导模型按人类意图响应请求：
+                                    <ul>
+                                        <li><b>GPT-4o1</b>：大规模高质量指令示例训练</li>
+                                        <li><b>Claude 3.7</b>：强调安全边界和详细指令理解</li>
+                                        <li><b>DeepSeek R1</b>：在科技领域和编程任务上额外加强训练</li>
+                                        <li><b>Gemini 1.5</b>：多模态指令微调，跨领域任务对齐</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="method-card">
+                                <div class="method-title">对齐技术 (RLHF/DPO)</div>
+                                <div class="method-desc">
+                                    使模型输出与人类偏好一致的关键技术：
+                                    <ul>
+                                        <li><b>RLHF</b>：通过人类反馈的强化学习，GPT和Claude主要采用</li>
+                                        <li><b>DPO</b>：直接偏好优化，Llama和部分模型采用</li>
+                                        <li><b>Constitutional AI</b>：Claude特有的安全导向训练</li>
+                                        <li><b>DeepSeek R1</b>：结合RLHF和专家领域校准</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">模型架构与技术差异</div>
+                    <div class="card-content">
+                        <div class="architecture-diagram">
+                            <svg class="arch-svg-container" viewBox="0 0 500 300">
+                                <!-- 标题 -->
+                                <text x="250" y="20" text-anchor="middle" font-weight="bold" font-size="14">大语言模型架构对比</text>
+                                
+                                <!-- 基础架构层 -->
+                                <rect x="50" y="40" width="400" height="40" fill="#e6eff7" stroke="#c5d7e7"></rect>
+                                <text x="250" y="65" text-anchor="middle" font-size="12">Transformer 基础架构</text>
+                                
+                                <!-- 各模型特色层 -->
+                                <rect x="50" y="90" width="80" height="160" fill="#10a37f" fill-opacity="0.15" stroke="#10a37f"></rect>
+                                <text x="90" y="110" text-anchor="middle" font-size="11" font-weight="bold">GPT-4o1</text>
+                                <rect x="55" y="120" width="70" height="25" rx="3" fill="#10a37f" fill-opacity="0.3"></rect>
+                                <text x="90" y="136" text-anchor="middle" font-size="10">多模态融合层</text>
+                                <rect x="55" y="150" width="70" height="25" rx="3" fill="#10a37f" fill-opacity="0.3"></rect>
+                                <text x="90" y="166" text-anchor="middle" font-size="10">推理增强模块</text>
+                                <rect x="55" y="180" width="70" height="25" rx="3" fill="#10a37f" fill-opacity="0.3"></rect>
+                                <text x="90" y="196" text-anchor="middle" font-size="10">思维链增强</text>
+                                <rect x="55" y="210" width="70" height="25" rx="3" fill="#10a37f" fill-opacity="0.3"></rect>
+                                <text x="90" y="226" text-anchor="middle" font-size="10">通用能力调优</text>
+                                
+                                <rect x="140" y="90" width="80" height="160" fill="#8c44f7" fill-opacity="0.15" stroke="#8c44f7"></rect>
+                                <text x="180" y="110" text-anchor="middle" font-size="11" font-weight="bold">Claude 3.7</text>
+                                <rect x="145" y="120" width="70" height="25" rx="3" fill="#8c44f7" fill-opacity="0.3"></rect>
+                                <text x="180" y="136" text-anchor="middle" font-size="10">宪法AI架构</text>
+                                <rect x="145" y="150" width="70" height="25" rx="3" fill="#8c44f7" fill-opacity="0.3"></rect>
+                                <text x="180" y="166" text-anchor="middle" font-size="10">指令理解优化</text>
+                                <rect x="145" y="180" width="70" height="25" rx="3" fill="#8c44f7" fill-opacity="0.3"></rect>
+                                <text x="180" y="196" text-anchor="middle" font-size="10">安全性增强</text>
+                                <rect x="145" y="210" width="70" height="25" rx="3" fill="#8c44f7" fill-opacity="0.3"></rect>
+                                <text x="180" y="226" text-anchor="middle" font-size="10">长文处理模块</text>
+                                
+                                <rect x="230" y="90" width="80" height="160" fill="#ea4335" fill-opacity="0.15" stroke="#ea4335"></rect>
+                                <text x="270" y="110" text-anchor="middle" font-size="11" font-weight="bold">Gemini 1.5</text>
+                                <rect x="235" y="120" width="70" height="25" rx="3" fill="#ea4335" fill-opacity="0.3"></rect>
+                                <text x="270" y="136" text-anchor="middle" font-size="10">Pathways架构</text>
+                                <rect x="235" y="150" width="70" height="25" rx="3" fill="#ea4335" fill-opacity="0.3"></rect>
+                                <text x="270" y="166" text-anchor="middle" font-size="10">超长上下文优化</text>
+                                <rect x="235" y="180" width="70" height="25" rx="3" fill="#ea4335" fill-opacity="0.3"></rect>
+                                <text x="270" y="196" text-anchor="middle" font-size="10">科学推理模块</text>
+                                <rect x="235" y="210" width="70" height="25" rx="3" fill="#ea4335" fill-opacity="0.3"></rect>
+                                <text x="270" y="226" text-anchor="middle" font-size="10">多语言能力</text>
+                                
+                                <rect x="320" y="90" width="80" height="160" fill="#4285f4" fill-opacity="0.15" stroke="#4285f4"></rect>
+                                <text x="360" y="110" text-anchor="middle" font-size="11" font-weight="bold">DeepSeek R1</text>
+                                <rect x="325" y="120" width="70" height="25" rx="3" fill="#4285f4" fill-opacity="0.3"></rect>
+                                <text x="360" y="136" text-anchor="middle" font-size="10">专业知识增强</text>
+                                <rect x="325" y="150" width="70" height="25" rx="3" fill="#4285f4" fill-opacity="0.3"></rect>
+                                <text x="360" y="166" text-anchor="middle" font-size="10">中文优化层</text>
+                                <rect x="325" y="180" width="70" height="25" rx="3" fill="#4285f4" fill-opacity="0.3"></rect>
+                                <text x="360" y="196" text-anchor="middle" font-size="10">科研能力模块</text>
+                                <rect x="325" y="210" width="70" height="25" rx="3" fill="#4285f4" fill-opacity="0.3"></rect>
+                                <text x="360" y="226" text-anchor="middle" font-size="10">代码生成优化</text>
+                                
+                                <!-- 底层 -->
+                                <rect x="50" y="260" width="400" height="30" fill="#e6eff7" stroke="#c5d7e7"></rect>
+                                <text x="250" y="280" text-anchor="middle" font-size="12">硬件加速与推理优化</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row" style="flex: 1.1;">
+                <div class="card">
+                    <div class="card-header">适用应用场景与优势领域</div>
+                    <div class="card-content">
+                        <div class="applications">
+                            <div class="app-item">
+                                <div class="app-title">通用对话与内容创作</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #8c44f7;"></span>Claude 3.7 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：创造力高，风格多样，质量稳定</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">学术研究与科研辅助</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #4285f4;"></span>DeepSeek R1 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #ea4335;"></span>Gemini 1.5 Pro <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：文献理解，实验设计，研究方法推荐</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">编程与技术开发</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #4285f4;"></span>DeepSeek R1 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p>优势：代码质量高，调试能力强，文档生成完善</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">教育与学习辅助</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #8c44f7;"></span>Claude 3.7 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #34A853;"></span>GLM-4 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：解释清晰，教学风格，概念拓展能力</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">数据分析与决策支持</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #ea4335;"></span>Gemini 1.5 Pro <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：大数据处理，趋势分析，可视化解读</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">企业应用与定制化服务</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #0668E1;"></span>Llama 3.1 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #34A853;"></span>GLM-4 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：可私有部署，定制化训练，安全可控</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">医疗健康辅助</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #8c44f7;"></span>Claude 3.7 <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #4285f4;"></span>DeepSeek R1 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：专业审慎，安全限制明确，参考文献支持</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">多语言跨文化交流</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #ea4335;"></span>Gemini 1.5 Pro <span class="model-badge badge-excellent">最佳</span></p>
+                                    <p><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：多语种支持，文化理解，地域知识</p>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-title">考试命题与教育测评</div>
+                                <div class="app-models">
+                                    <p><span class="model-icon" style="background-color: #10a37f;"></span>GPT-4o1 <span class="model-badge badge-good">优秀</span></p>
+                                    <p><span class="model-icon" style="background-color: #4285f4;"></span>DeepSeek R1 <span class="model-badge badge-good">优秀</span></p>
+                                    <p>优势：多样化题型，专业命题，难度控制准确</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footnote">数据截至2025年3月，基于公开信息与实际测试</div>
+        </div>
+    </div>
+</body>
+</html>

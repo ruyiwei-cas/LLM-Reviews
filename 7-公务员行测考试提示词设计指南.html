@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公务员行测考试提示词设计指南</title>
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 顶部导航栏 */
+        .navigation {
+            width: 100%;
+            height: 60px;
+            background-color: #2b4c7e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border-radius: 50%;
+            color: #2b4c7e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .nav-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 14px;
+            user-select: none;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-button.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+        
+        /* 内容部分 */
+        .content-container {
+            width: 300%;
+            height: calc(100vh - 60px);
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .page {
+            width: 33.33%;
+            height: 100%;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #2b4c7e;
+            font-weight: bold;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            margin: 25px 0 15px;
+            color: #2b4c7e;
+            font-weight: bold;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #2b4c7e;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2b4c7e;
+        }
+        
+        .guide-list {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .guide-list li {
+            margin-bottom: 8px;
+        }
+        
+        .example-prompt {
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border-left: 3px solid #64748b;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #e5e7eb;
+            border-radius: 100px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        
+        .tips-box {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .tips-title {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0369a1;
+        }
+        
+        .tips-icon {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            background-color: #0ea5e9;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background-color: #f1f5f9;
+            font-weight: bold;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .good-example {
+            border-left: 4px solid #10b981;
+        }
+        
+        .bad-example {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .template-box {
+            border: 1px dashed #d1d5db;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f9fafb;
+        }
+        
+        .part-label {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #2b4c7e;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .page {
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+            
+            .nav-button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navigation">
+            <div class="logo">
+                <div class="logo-icon">行</div>
+                公务员行测考试提示词设计指南
+            </div>
+            <div class="nav-buttons">
+                <div class="nav-button active" onclick="changePage(0)">行测题型框架</div>
+                <div class="nav-button" onclick="changePage(1)">命题策略与技巧</div>
+                <div class="nav-button" onclick="changePage(2)">高级模板与案例</div>
+            </div>
+        </nav>
+        
+        <div class="content-container" id="content-container">
+            <!-- 第一页: 行测题型框架 -->
+            <section class="page">
+                <h1 class="page-title">行测题型框架</h1>
+                <p>行政职业能力测验（行测）是公务员考试的核心内容。本页面介绍如何使用大模型生成各类行测题型的提示词框架。</p>
+                
+                <h2 class="page-subtitle">言语理解与表达</h2>
+                <div class="card">
+                    <h3 class="card-title">片段阅读框架</h3>
+                    <ul class="guide-list">
+                        <li><strong>题材指定</strong>：明确文段主题领域和体裁</li>
+                        <li><strong>能力指向</strong>：明确测试主旨概括、意图判断或细节理解</li>
+                        <li><strong>难度控制</strong>：设置语言难度和逻辑复杂度</li>
+                        <li><strong>干扰设计</strong>：明确干扰项设计思路</li>
+                    </ul>
+                    <div class="example-prompt">请以【资深公务员考试命题人】的身份，创建一道行测【片段阅读】题目，具体要求：
+
+1. 文段主题：【宏观经济政策】，体裁为【政论文】风格
+2. 文段长度：150-200字左右
+3. 考查能力：【主旨概括】能力
+4. 难度级别：【中等偏上】
+5. 干扰项设计：
+   - 一个【以偏概全】的选项
+   - 一个【无中生有】的选项
+   - 一个【混淆概念】的选项
+   - 一个【正确答案】
+
+请提供完整题目、四个选项（A-D）及详细解析。解析需要说明正确选项的理由及其他选项错误的原因。</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">逻辑填空框架</h3>
+                    <ul class="guide-list">
+                        <li><strong>词语属性</strong>：指定词语类型（成语、熟语、多义词等）</li>
+                        <li><strong>填空数量</strong>：单空、双空或多空</li>
+                        <li><strong>考查重点</strong>：语境理解、搭配固定、感情色彩等</li>
+                    </ul>
+                    <div class="example-prompt">请设计一道行测【逻辑填空】题目，具体要求：
+
+1. 题型：【双空】填空
+2. 考查重点：【词语搭配】+【感情色彩】
+3. 备选词语类型：以【成语】为主
+4. 题目背景：围绕【环境保护】主题设计文段
+5. 难度要求：设置明显的语境线索，但需通过细致辨析才能选出正确答案
+
+请提供：
+- 完整题目（含填空）
+- 四个选项（A-D），每个选项包含两个词语
+- 详细解析，需重点分析每组词语在语境中的适用性和搭配关系</div>
+                </div>
+                
+                <h2 class="page-subtitle">判断推理</h2>
+                <div class="card">
+                    <h3 class="card-title">图形推理框架</h3>
+                    <ul class="guide-list">
+                        <li><strong>规律类型</strong>：位置、样式、数量、属性、组合等</li>
+                        <li><strong>难度设定</strong>：单一规律或多重规律</li>
+                        <li><strong>图形描述</strong>：清晰描述每个图形的构成要素</li>
+                    </ul>
+                    <div class="example-prompt">请设计一道行测【图形推理】题目，并提供详细的文字描述使读者能清晰理解图形内容。题目要求：
+
+1. 规律类型：【旋转】+【元素变化】的组合规律
+2. 难度级别：中等，设置两重规律，但有明显线索
+3. 图形特征：使用【几何图形】（如圆形、三角形、正方形等）和【线条】元素
+4. 问题结构：呈现5个图形作为题干，要求推测第6个图形
+
+图形描述要求：
+- 使用精确的文字描述每个图形（如"一个三角形内部有两条垂直交叉的直线"）
+- 解释每组图形之间的变化规律
+- 描述每个选项图形的具体特征
+
+请提供完整题目描述、4个备选答案描述和详细解析。解析需说明图形变化的完整规律。</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">逻辑判断框架</h3>
+                    <ul class="guide-list">
+                        <li><strong>推理类型</strong>：必然性推理、可能性推理、加强削弱等</li>
+                        <li><strong>题材背景</strong>：社会热点、政策法规、科学发现等</li>
+                        <li><strong>论证结构</strong>：前提、结论和假设的设计</li>
+                    </ul>
+                    <div class="example-prompt">请设计一道行测【削弱型逻辑判断】题目，具体要求：
+
+1. 题材背景：【城市交通拥堵治理】
+2. 论证结构：论点+论据+隐含假设
+3. 难度要求：中等，含有一定隐含假设
+4. 削弱选项设计：
+   - 一个【最有力削弱】选项（直指隐含假设）
+   - 一个【部分削弱】选项（质疑论据可靠性）
+   - 一个【无关选项】（看似相关但不影响论证）
+   - 一个【加强选项】（错误方向干扰）
+
+请提供完整论证过程、问题、四个选项和详细解析。解析需分析每个选项对论证的具体影响方式。</div>
+                </div>
+                
+                <div class="tips-box">
+                    <div class="tips-title">
+                        <div class="tips-icon">i</div>
+                        行测命题核心要素
+                    </div>
+                    <p>设计行测提示词时，应当始终包含以下要素：</p>
+                    <ul class="guide-list">
+                        <li><strong>明确题型分类</strong>：指定具体的行测题型和子类</li>
+                        <li><strong>设定考查能力点</strong>：明确题目要测试的核心能力</li>
+                        <li><strong>控制难度系数</strong>：通过具体参数设定题目难度</li>
+                        <li><strong>干扰项设计思路</strong>：明确错误选项的设计方向</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 第二页: 命题策略与技巧 -->
+            <section class="page">
+                <h1 class="page-title">命题策略与技巧</h1>
+                <p>如何优化提示词，让大模型生成更符合行测标准、更具区分度的题目？本页提供实用策略与技巧。</p>
+                
+                <h2 class="page-subtitle">数量关系与资料分析</h2>
+                <div class="card">
+                    <h3 class="card-title">数量关系命题策略</h3>
+                    <p>通过精准设定计算难度和陷阱，提高数量关系题目的区分度。</p>
+                    <div class="template-box">
+                        请创建一道行测<span class="highlight">【数量关系】</span>题目，核心考查<span class="highlight">【特定数学方法】</span>，同时设置以下要素：
+                        1. 包含一个<span class="highlight">【计算陷阱】</span>
+                        2. 需要<span class="highlight">【特定简化技巧】</span>才能高效解题
+                        3. 问题场景与<span class="highlight">【实际工作情境】</span>相关
+                    </div>
+                    <div class="example-prompt">请创建一道行测【数量关系】题目，核心考查【倍数问题与方程思想】，同时设置以下要素：
+1. 包含一个【单位转换】计算陷阱
+2. 需要【待定系数法】才能高效解题
+3. 问题场景与【政府采购管理】相关
+
+要求题目贴近公务员实际工作，数据合理且计算量适中。请提供完整题目、四个选项及详细解析（包含常规解法和高效解法对比）。</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">资料分析命题策略</h3>
+                    <p>设计多层次信息提取与计算的资料分析题，提高综合分析能力测试。</p>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>基础版</th>
+                            <th>优化版</th>
+                        </tr>
+                        <tr>
+                            <td class="bad-example">请设计一道关于GDP增长的资料分析题。</td>
+                            <td class="good-example">请设计一道关于【地区GDP与产业结构】的资料分析题，包含：<br>
+                            1. 图表类型：一张折线图+一张饼图<br>
+                            2. 数据特点：部分数据需间接计算<br>
+                            3. 题目层次：从基础数据读取到趋势推断<br>
+                            4. 计算特点：包含同比/环比/倍数计算</td>
+                        </tr>
+                    </table>
+                    <div class="example-prompt">请设计一组行测【资料分析】题目，具体要求：
+
+1. 材料主题：【某省近五年财政收支情况】
+2. 数据呈现：
+   - 一张表格（展示总量数据）
+   - 一张柱状图（展示结构数据）
+3. 设计五道题目，依次考查：
+   - 第1题：简单数据读取与计算
+   - 第2题：比重或倍数计算
+   - 第3题：增长率计算
+   - 第4题：平均数或其他统计量计算
+   - 第5题：综合分析与推断
+
+数据要求：确保数据真实合理，且计算难度适中
+题目特点：题干清晰，选项设计有区分度，能够考查快速计算和估算能力
+
+请提供完整材料、五道题目、每题四个选项及详细解析。</div>
+                </div>
+                
+                <h2 class="page-subtitle">常识判断与公文写作</h2>
+                <div class="card">
+                    <h3 class="card-title">常识判断命题技巧</h3>
+                    <p>设计跨学科、时效性强的常识题，考查考生知识面广度与深度。</p>
+                    <div class="tags-container">
+                        <span class="tag">政治常识</span>
+                        <span class="tag">法律常识</span>
+                        <span class="tag">经济常识</span>
+                        <span class="tag">人文常识</span>
+                        <span class="tag">科技常识</span>
+                        <span class="tag">地理国情</span>
+                    </div>
+                    <div class="example-prompt">请设计5道行测【常识判断】题目，覆盖不同知识领域，具体要求：
+
+1. 题目分布：
+   - 1道【时政热点】题（近一年内的重要政策或事件）
+   - 1道【法律法规】题（与公务员职责相关）
+   - 1道【科技常识】题（与政府数字化转型相关）
+   - 1道【历史文化】题（与中国传统文化相关）
+   - 1道【地理国情】题（与区域发展战略相关）
+
+2. 题目设计要点：
+   - 难度适中，避免过于专业或过于简单
+   - 具有时代性，反映当前社会发展状况
+   - 每道题目都应有实用价值，与公务员工作有一定关联
+   - 干扰项设计要合理，避免明显错误
+
+请提供5道完整题目（每题包含题干和四个选项），并附详细解析。</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">公文写作技巧</h3>
+                    <p>设计符合公务员实际工作的公文写作题目，考查文种选择和写作规范。</p>
+                    <div class="example-prompt">请设计一道公务员考试【公文写作】题目，具体要求：
+
+1. 背景设定：您是【某市政府办公室工作人员】，面临【城市内涝防治】相关工作
+2. 任务明确：需要起草一份【通知/意见/报告】（从中选择最合适的文种）
+3. 情境设计：提供具体的工作背景、任务目标和关键要素
+4. 评分标准：
+   - 文种选择的正确性
+   - 格式规范（标题、主送机关、正文结构等）
+   - 内容要素完整性
+   - 语言表达规范性
+
+请提供：
+1. 完整的题目描述（背景材料）
+2. 写作要求和注意事项
+3. 参考答案框架（包含文种说明、格式示范和内容要点）
+4. 评分细则</div>
+                </div>
+                
+                <div class="tips-box">
+                    <div class="tips-title">
+                        <div class="tips-icon">i</div>
+                        命题质量提升技巧
+                    </div>
+                    <p>提高行测题目质量的关键策略：</p>
+                    <ul class="guide-list">
+                        <li><strong>实际工作关联</strong>：将题目与公务员实际工作场景结合</li>
+                        <li><strong>热点融入</strong>：适当融入时政热点和社会关注话题</li>
+                        <li><strong>梯度设计</strong>：在同一类型中设置难度梯度，考查不同层次能力</li>
+                        <li><strong>干扰项精细化</strong>：设计有针对性的干扰项，提高选择的区分度</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 第三页: 高级模板与案例 -->
+            <section class="page">
+                <h1 class="page-title">高级模板与案例</h1>
+                <p>本页提供行测各类题型的高级提示词模板和实际案例，可直接用于生成高质量的行测题目。</p>
+                
+                <h2 class="page-subtitle">综合行测命题模板</h2>
+                <div class="card">
+                    <h3 class="card-title">言语理解高级模板</h3>
+                    <div class="template-box">
+                        <span class="part-label">角色</span>以国家公务员考试资深命题专家的身份
+                        
+                        <span class="part-label">任务</span>设计一道行测<span class="highlight">【具体言语题型】</span>题目
+                        
+                        <span class="part-label">要求</span>题目需满足以下条件：
+                        1. 主题领域：<span class="highlight">【特定主题】</span>
+                        2. 难度级别：<span class="highlight">【1-5级，5最难】</span>
+                        3. 考查能力：<span class="highlight">【具体能力点】</span>
+                        4. 干扰项设计：<span class="highlight">【具体干扰思路】</span>
+                        
+                        <span class="part-label">输出</span>请提供：
+                        - 完整题干
+                        - 四个选项（A、B、C、D）
+                        - 正确答案
+                        - 详细解析（包含每个选项的分析）
+                    </div>
+                    <div class="example-prompt">以国家公务员考试资深命题专家的身份，设计一道行测【片段阅读】题目。
+
+题目需满足以下条件：
+1. 主题领域：【政府数字化转型】
+2. 难度级别：【4级（中高难度）】
+3. 考查能力：【意图判断】
+4. 干扰项设计：
+   - 一个选项混淆"原因"与"目的"
+   - 一个选项混淆"现状"与"对策"
+   - 一个选项表述过于绝对化
+   - 正确选项准确把握作者意图
+
+请提供：
+- 完整题干
+- 四个选项（A、B、C、D）
+- 正确答案
+- 详细解析（包含每个选项的分析）</div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">判断推理高级模板</h3>
+                    <div class="example-prompt">请作为行测命题专家，设计一套【分析推理】题组（共3题），形成一个微型推理系列，具体要求：
+
+1. 题目背景：【某政府部门人员调配】场景
+2. 推理特点：基于有限信息，进行排列组合或条件关系推理
+3. 题目设计：
+   - 首先提供一段背景材料和若干条件信息
+   - 基于相同信息设置3个不同问题，难度递增
+   - 第1题：简单的直接推理
+   - 第2题：需要组合2-3个条件的推理
+   - 第3题：需要进行假设性推理或反向思考
+
+4. 解题所需技巧：
+   - 建立关系图或表格
+   - 运用假设法
+   - 排除法推理
+
+请提供完整的材料、三道题目（每题包含题干和五个选项）、标准答案和详细解析。解析需说明推理路径和思考方法。</div>
+                </div>
+                
+                <h2 class="page-subtitle">行测实战案例</h2>
+                <div class="card">
+                    <h3 class="card-title">案例：综合行测言语理解</h3>
+                    <div class="example-prompt">作为国家公务员考试命题专家，请设计一套小型行测【言语理解】题组（共5题），覆盖不同题型，具体要求：
+
+1. 题型分布：
+   - 1道【主旨概括题】
+   - 1道【意图判断题】
+   - 1道【细节理解题】
+   - 1道【词句理解题】
+   - 1道【语句表达题】（如：语句排序或填入恰当的语句）
+
+2. 主题设定：
+   - 全部围绕【乡村振兴战略】这一主题
+   - 每道题使用不同角度的材料，但主题一致
+   - 材料应贴近政府工作实际，具有政策指导意义
+
+3. 难度设置：
+   - 整体难度中等偏上
+   - 5道题目难度递增
+
+4. 其他要求：
+   - 材料内容时效性强，反映近期政策导向
+   - 语言表述规范，符合公文特点
+   - 干扰项设计有区分度，能够测试考生的精准理解能力
+
+请提供5道完整题目、参考答案和详细解析。解析应说明命题思路和选项设计意图。</div>
+                    
+                    <p>此模板的优势：</p>
+                    <ul class="guide-list">
+                        <li>围绕单一主题设计系列题目，提高了命题的连贯性和专业深度</li>
+                        <li>覆盖言语理解各个题型，全面考查语言理解能力</li>
+                        <li>结合政策热点，贴近公务员工作实际</li>
+                        <li>设置难度梯度，提高了区分度</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">案例：数量关系与资料分析结合</h3>
+                    <div class="example-prompt">请设计一道综合型行测题目，融合【数量关系】与【资料分析】的特点，具体要求：
+
+1. 题目形式：
+   - 以一份简短的数据材料为基础（如表格、图表等）
+   - 设置一个需要综合计算和推理的问题
+
+2. 数据背景：
+   - 主题为【政府预算执行与绩效评估】
+   - 包含3-5年的历史数据和结构数据
+   - 数据应真实合理，符合实际情况
+
+3. 考查能力：
+   - 数据分析能力（读取和解释数据）
+   - 数学运算能力（比重、增长率、平均数等计算）
+   - 推理判断能力（基于数据趋势做出合理推断）
+
+4. 计算特点：
+   - 表面看计算量较大
+   - 实际有简便方法可快速求解
+   - 设置一个计算陷阱或易错点
+
+请提供完整的材料、题目、四个选项、正确答案，以及两种解法（常规解法和最优解法）的详细解析。</div>
+                </div>
+                
+                <div class="tips-box">
+                    <div class="tips-title">
+                        <div class="tips-icon">i</div>
+                        行测命题实战指南
+                    </div>
+                    <p>使用大模型生成高质量行测题目的五大黄金法则：</p>
+                    <ol class="guide-list">
+                        <li><strong>目标精准化</strong>：明确指定题型、考点和能力测试目标</li>
+                        <li><strong>情境真实化</strong>：使用贴近公务员工作的真实场景</li>
+                        <li><strong>难度分级化</strong>：使用1-5级难度系数明确控制题目难度</li>
+                        <li><strong>干扰科学化</strong>：设计有针对性、有教育意义的干扰选项</li>
+                        <li><strong>评价标准化</strong>：提供客观、明确的评分标准和解题思路</li>
+                    </ol>
+                    <p>记住：优质行测题目应该既能有效区分考生能力水平，又能反映公务员工作所需的实际技能和知识。</p>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // 页面切换函数
+        function changePage(pageIndex) {
+            // 更新内容容器的位置
+            const contentContainer = document.getElementById('content-container');
+            contentContainer.style.transform = `translateX(-${pageIndex * 33.33}%)`;
+            
+            // 更新导航按钮的激活状态
+            const navButtons = document.querySelectorAll('.nav-button');
+            navButtons.forEach((button, index) => {
+                if (index === pageIndex) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认显示第一页
+            changePage(0);
+            
+            // 添加按键导航
+            document.addEventListener('keydown', function(event) {
+                const contentContainer = document.getElementById('content-container');
+                const currentPage = Math.abs(parseInt(contentContainer.style.transform.replace('translateX(', '').replace('%)', '')) || 0) / 33.33;
+                
+                if (event.key === 'ArrowRight' && currentPage < 2) {
+                    changePage(currentPage + 1);
+                } else if (event.key === 'ArrowLeft' && currentPage > 0) {
+                    changePage(currentPage - 1);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

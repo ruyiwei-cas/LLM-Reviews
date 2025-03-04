@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>大模型生成的公务员行测图形推理题示例</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: #d4e8ff;
+            color: #1a3c5e;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #1a3c5e;
+        }
+        
+        .content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .left-panel {
+            width: 270px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1a3c5e;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #2c5f8e;
+        }
+        
+        .model-select {
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+        
+        .model-option {
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            transition: all 0.2s ease;
+        }
+        
+        .model-option:hover {
+            background-color: #f0f4f8;
+        }
+        
+        .model-option.active {
+            background-color: #e6eff7;
+            border-color: #2c5f8e;
+        }
+        
+        .model-name {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .model-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .prompt-section {
+            margin-top: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .prompt-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #2c5f8e;
+            margin-bottom: 8px;
+        }
+        
+        .prompt-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            line-height: 1.3;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .question-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .question-tab {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .question-tab.active {
+            border-bottom: 2px solid #2c5f8e;
+            color: #2c5f8e;
+            font-weight: bold;
+        }
+        
+        .question-tab:not(.active):hover {
+            background-color: #f0f4f8;
+        }
+        
+        .question-content {
+            display: none;
+        }
+        
+        .question-content.active {
+            display: block;
+        }
+        
+        .question-card {
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+        
+        .card-gpt {
+            border-left-color: #10a37f;
+        }
+        
+        .card-claude {
+            border-left-color: #8c44f7;
+        }
+        
+        .card-gemini {
+            border-left-color: #ea4335;
+        }
+        
+        .card-deepseek {
+            border-left-color: #4285f4;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-type {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background-color: #f0f4f8;
+            color: #1a3c5e;
+        }
+        
+        .question-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .figure-container {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .figure-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .figure-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ddd;
+            margin: 0 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+        }
+        
+        .figure-item.question-mark {
+            background-color: #f0f4f8;
+            border: 1px dashed #aaa;
+        }
+        
+        .figure-item-label {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .options-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .option-item {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option-item:hover {
+            border-color: #2c5f8e;
+            box-shadow: 0 0 5px rgba(44, 95, 142, 0.3);
+        }
+        
+        .option-item.selected {
+            border: 2px solid #2c5f8e;
+            background-color: #e6eff7;
+        }
+        
+        .option-item.correct {
+            border: 2px solid #28a745;
+            background-color: #d4edda;
+        }
+        
+        .option-label {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .correct-answer {
+            display: inline-block;
+            padding: 3px 6px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        
+        .explanation {
+            font-size: 13px;
+            color: #555;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #2c5f8e;
+            line-height: 1.4;
+        }
+        
+        .model-label {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+        }
+        
+        .label-gpt {
+            background-color: #10a37f;
+        }
+        
+        .label-claude {
+            background-color: #8c44f7;
+        }
+        
+        .label-gemini {
+            background-color: #ea4335;
+        }
+        
+        .label-deepseek {
+            background-color: #4285f4;
+        }
+        
+        .quality-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .star {
+            color: gold;
+        }
+        
+        .footnote {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* 图形绘制样式 */
+        .svg-shape {
+            stroke-width: 2px;
+            vector-effect: non-scaling-stroke;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab切换功能
+            const tabs = document.querySelectorAll('.question-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有标签页和内容的active类
+                    document.querySelectorAll('.question-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.question-content').forEach(c => c.classList.remove('active'));
+                    
+                    // 给当前标签页添加active类
+                    this.classList.add('active');
+                    
+                    // 获取匹配的内容并添加active类
+                    const contentId = this.getAttribute('data-content');
+                    document.getElementById(contentId).classList.add('active');
+                });
+            });
+            
+            // 模型选择功能
+            const modelOptions = document.querySelectorAll('.model-option');
+            modelOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.model-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 获取模型对应的题目
+                    const modelName = this.getAttribute('data-model');
+                    showModelQuestions(modelName);
+                });
+            });
+            
+            // 显示选中模型的题目
+            function showModelQuestions(modelName) {
+                document.querySelectorAll('.question-card').forEach(card => {
+                    const cardModel = card.getAttribute('data-model');
+                    if (cardModel === modelName || modelName === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 选项选择功能
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const questionId = this.closest('.question-content').id;
+                    document.querySelectorAll(`#${questionId} .option-item`).forEach(o => o.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // 检查是否为正确答案
+                    const correctAnswer = this.getAttribute('data-correct');
+                    if (correctAnswer === 'true') {
+                        this.classList.add('correct');
+                        document.querySelector(`#${questionId} .answer-feedback`).textContent = '回答正确！';
+                        document.querySelector(`#${questionId} .answer-feedback`).style.color = '#28a745';
+                    } else {
+                        document.querySelector(`#${questionId} .answer-feedback`).textContent = '回答错误，请重试。';
+                        document.querySelector(`#${questionId} .answer-feedback`).style.color = '#dc3545';
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">大模型生成的公务员行测图形推理题示例</div>
+        <div class="content">
+            <div class="left-panel">
+                <div class="section-title">模型选择</div>
+                <div class="model-select">
+                    <div class="model-option active" data-model="all">
+                        <div class="model-name">
+                            <span class="model-icon" style="background-color: #333;"></span>
+                            所有模型
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="gpt">
+                        <div class="model-name">
+                            <span class="model-icon" style="background-color: #10a37f;"></span>
+                            GPT-4o1
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="claude">
+                        <div class="model-name">
+                            <span class="model-icon" style="background-color: #8c44f7;"></span>
+                            Claude 3.7
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="gemini">
+                        <div class="model-name">
+                            <span class="model-icon" style="background-color: #ea4335;"></span>
+                            Gemini 1.5 Pro
+                        </div>
+                    </div>
+                    <div class="model-option" data-model="deepseek">
+                        <div class="model-name">
+                            <span class="model-icon" style="background-color: #4285f4;"></span>
+                            DeepSeek V3
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prompt-section">
+                    <div class="prompt-title">图形推理Prompt示例</div>
+                    <div class="prompt-box">
+请设计3道公务员行测考试中的图形推理题，要求如下：
+
+1. 包含一道图形旋转变换题、一道元素叠加规律题和一道图形数量变化题
+2. 难度适中，具有较好的区分度
+3. 每道题目需要提供：
+   - 清晰的题干描述
+   - 一组符合特定规律的图形序列
+   - 四个选项图形
+   - 正确答案和详细解析
+4. 图形描述要精确，便于直观理解或绘制
+5. 解析要详细说明图形变化规律，并解释为何正确选项符合规律，其他选项不符合
+6. 题目要原创，符合行测考试标准
+
+注意：需要保证图形规律严谨，唯一确定，不存在多解可能，这对于标准化考试至关重要。
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="question-tabs">
+                    <div class="question-tab active" data-content="rotation-question">图形旋转变换</div>
+                    <div class="question-tab" data-content="element-question">元素叠加规律</div>
+                    <div class="question-tab" data-content="quantity-question">图形数量变化</div>
+                </div>
+                
+                <!-- 图形旋转变换题 -->
+                <div id="rotation-question" class="question-content active">
+                    <div class="question-card card-gpt" data-model="gpt">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="model-label label-gpt">GPT-4o1</span>
+                                图形旋转变换题
+                            </div>
+                            <div class="quality-rating">
+                                质量评分：<span class="star">★★★★★</span> (4.9/5)
+                            </div>
+                        </div>
+                        
+                        <div class="question-text">
+                            请观察下列图形的变化规律，选择最合适的一项填入问号处：
+                        </div>
+                        
+                        <div class="figure-container">
+                            <div class="figure-row">
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="30" y1="5" x2="30" y2="20" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                        <line x1="30" y1="40" x2="30" y2="55" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="figure-item-label">1</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="16" y1="16" x2="26" y2="26" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                        <line x1="34" y1="34" x2="44" y2="44" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="figure-item-label">2</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="5" y1="30" x2="20" y2="30" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                        <line x1="40" y1="30" x2="55" y2="30" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="figure-item-label">3</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="16" y1="44" x2="26" y2="34" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                        <line x1="34" y1="26" x2="44" y2="16" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="figure-item-label">4</div>
+                                </div>
+                                <div class="figure-item question-mark">
+                                    <span style="font-size: 24px; font-weight: bold; color: #1a3c5e;">?</span>
+                                    <div class="figure-item-label">5</div>
+                                </div>
+                            </div>
+                            
+                            <div class="options-container">
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="30" y1="10" x2="30" y2="50" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="option-label">A</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="15" y1="15" x2="45" y2="45" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="option-label">B</div>
+                                </div>
+                                <div class="option-item" data-correct="true">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="30" y1="5" x2="30" y2="20" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                        <line x1="30" y1="40" x2="30" y2="55" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="option-label">C</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="30" x2="50" y2="30" stroke="#1a3c5e" class="svg-shape" stroke-width="2.5"></line>
+                                    </svg>
+                                    <div class="option-label">D</div>
+                                </div>
+                            </div>
+                            <div class="answer-feedback" style="height: 20px; font-size: 14px; font-weight: bold;"></div>
+                        </div>
+                        
+                        <div class="correct-answer">正确答案：C</div>
+                        
+                        <div class="explanation">
+                            <p><strong>解析：</strong></p>
+                            <p>这道题的图形变化规律是：圆内的直线段按照顺时针方向每次旋转45°。</p>
+                            <p>观察题干图形序列：</p>
+                            <p>图1：两条垂直线段处于12点钟和6点钟位置（垂直方向）</p>
+                            <p>图2：两条垂直线段旋转45°，处于1点半钟和7点半钟位置（右上-左下方向）</p>
+                            <p>图3：两条垂直线段再旋转45°，处于3点钟和9点钟位置（水平方向）</p>
+                            <p>图4：两条垂直线段再旋转45°，处于4点半钟和10点半钟位置（右下-左上方向）</p>
+                            <p>图5（问号处）：按照顺时针旋转45°的规律，两条垂直线段应该再旋转45°，回到初始的12点钟和6点钟位置（垂直方向）</p>
+                            <p>因此，正确答案是C选项，即两条垂直线段处于垂直方向，与图1相同，这符合循环旋转的规律。</p>
+                            <p>选项A只有一条垂直线段，不符合规律；选项B只有一条对角线，不符合规律；选项D的线段处于水平方向，相当于图3的状态，不符合顺时针旋转45°的规律。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 元素叠加规律题 -->
+                <div id="element-question" class="question-content">
+                    <div class="question-card card-claude" data-model="claude">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="model-label label-claude">Claude 3.7</span>
+                                元素叠加规律题
+                            </div>
+                            <div class="quality-rating">
+                                质量评分：<span class="star">★★★★</span> (4.7/5)
+                            </div>
+                        </div>
+                        
+                        <div class="question-text">
+                            请观察下列图形变化规律，选择最合适的一项填入问号处：
+                        </div>
+                        
+                        <div class="figure-container">
+                            <div class="figure-row">
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">1</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                    </svg>
+                                    <div class="figure-item-label">2</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                    </svg>
+                                    <div class="figure-item-label">3</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <circle cx="30" cy="30" r="5" fill="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">4</div>
+                                </div>
+                                <div class="figure-item question-mark">
+                                    <span style="font-size: 24px; font-weight: bold; color: #1a3c5e;">?</span>
+                                    <div class="figure-item-label">5</div>
+                                </div>
+                            </div>
+                            
+                            <div class="options-container">
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <circle cx="30" cy="30" r="5" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <rect x="20" y="20" width="20" height="20" fill="white" stroke="#1a3c5e" class="svg-shape"></rect>
+                                    </svg>
+                                    <div class="option-label">A</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="10" y1="30" x2="50" y2="30" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="30" y1="10" x2="30" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                    </svg>
+                                    <div class="option-label">B</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <circle cx="30" cy="30" r="5" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="30" cy="30" r="25" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="option-label">C</div>
+                                </div>
+                                <div class="option-item" data-correct="true">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <rect x="10" y="10" width="40" height="40" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                        <circle cx="30" cy="30" r="15" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <line x1="10" y1="10" x2="50" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <line x1="50" y1="10" x2="10" y2="50" stroke="#1a3c5e" class="svg-shape"></line>
+                                        <circle cx="30" cy="30" r="5" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <rect x="15" y="15" width="30" height="30" fill="none" stroke="#1a3c5e" class="svg-shape"></rect>
+                                    </svg>
+                                    <div class="option-label">D</div>
+                                </div>
+                            </div>
+                            <div class="answer-feedback" style="height: 20px; font-size: 14px; font-weight: bold;"></div>
+                        </div>
+                        
+                        <div class="correct-answer">正确答案：D</div>
+                        
+                        <div class="explanation">
+                            <p><strong>解析：</strong></p>
+                            <p>这道题考查的是图形元素逐步叠加的规律。</p>
+                            <p>观察题干图形序列可以发现，从第1个图形开始，每个后继图形都是在前一个图形的基础上增加一个新元素：</p>
+                            <p>图1：基本图形，由一个正方形和一个圆组成</p>
+                            <p>图2：在图1的基础上，增加了一条从左上角到右下角的对角线</p>
+                            <p>图3：在图2的基础上，增加了一条从右上角到左下角的对角线，形成了"X"型</p>
+                            <p>图4：在图3的基础上，增加了一个实心小圆位于中心位置</p>
+                            <p>图5（问号处）：应该在图4的基础上继续增加一个新元素</p>
+                            <p>观察四个选项：</p>
+                            <p>选项A：增加了一个小正方形，但小正方形遮盖了之前的元素（实心小圆被白色填充覆盖），不符合叠加规律</p>
+                            <p>选项B：增加了十字线，符合新增元素的规律，但一次增加了两条线（水平线和竖直线），而之前每次只增加一个元素</p>
+                            <p>选项C：增加了一个更大的圆，但这个圆超出了原有正方形的范围，与前面图形的布局不一致</p>
+                            <p>选项D：增加了一个小一点的正方形，这个正方形位于最初正方形内部，与所有已有元素相协调，符合每次增加一个新元素且不破坏已有元素的规律</p>
+                            <p>因此，正确答案是D。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图形数量变化题 -->
+                <div id="quantity-question" class="question-content">
+                    <div class="question-card card-deepseek" data-model="deepseek">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="model-label label-deepseek">DeepSeek V3</span>
+                                图形数量变化题
+                            </div>
+                            <div class="quality-rating">
+                                质量评分：<span class="star">★★★★</span> (4.6/5)
+                            </div>
+                        </div>
+                        
+                        <div class="question-text">
+                            请分析下列图形的变化规律，选出最合适的一项填入问号处：
+                        </div>
+                        
+                        <div class="figure-container">
+                            <div class="figure-row">
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">1</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">2</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">3</div>
+                                </div>
+                                <div class="figure-item">
+                                    <svg width="60" height="60" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="figure-item-label">4</div>
+                                </div>
+                                <div class="figure-item question-mark">
+                                    <span style="font-size: 24px; font-weight: bold; color: #1a3c5e;">?</span>
+                                    <div class="figure-item-label">5</div>
+                                </div>
+                            </div>
+                            
+                            <div class="options-container">
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="option-label">A</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="option-label">B</div>
+                                </div>
+                                <div class="option-item" data-correct="true">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="option-label">C</div>
+                                </div>
+                                <div class="option-item" data-correct="false">
+                                    <svg width="50" height="50" viewBox="0 0 60 60">
+                                        <circle cx="20" cy="20" r="8" fill="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="20" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="20" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                        <circle cx="40" cy="40" r="8" fill="none" stroke="#1a3c5e" class="svg-shape"></circle>
+                                    </svg>
+                                    <div class="option-label">D</div>
+                                </div>
+                            </div>
+                            <div class="answer-feedback" style="height: 20px; font-size: 14px; font-weight: bold;"></div>
+                        </div>
+                        
+                        <div class="correct-answer">正确答案：C</div>
+                        
+                        <div class="explanation">
+                            <p><strong>解析：</strong></p>
+                            <p>这道题考查的是图形中实心圆的数量和位置变化规律。</p>
+                            <p>通过观察可以发现，图形中每个位置的圆在实心和空心之间交替变化，同时实心圆的总数具有一定规律。</p>
+                            <p>图1：有1个实心圆，位于右下角</p>
+                            <p>图2：有2个实心圆，位于右上角和左下角，其余位置为空心圆</p>
+                            <p>图3：有2个实心圆，位于左上角和右下角，其余位置为空心圆</p>
+                            <p>图4：有3个实心圆，位于右上角、左下角和右下角，只有左上角为空心圆</p>
+                            <p>图5（问号处）：根据实心圆数量的变化规律：1→2→2→3→?，下一个数字应该是2。</p>
+                            <p>另外可以观察到，相邻图形之间实心圆和空心圆的位置会发生变化，呈现一种交替的模式。</p>
+                            <p>比较图4和将要出现的图5：</p>
+                            <p>- 图4中左上角是空心圆，所以在图5中应该变为实心圆</p>
+                            <p>- 图4中右上角是实心圆，所以在图5中可能保持实心圆或变为空心圆</p>
+                            <p>- 图4中左下角是实心圆，所以在图5中可能保持实心圆或变为空心圆</p>
+                            <p>- 图4中右下角是实心圆，所以在图5中可能保持实心圆或变为空心圆</p>
+                            <p>由于图5中实心圆总数应为2个，而左上角应该是实心圆，所以另外三个位置中只能有一个是实心圆，其余两个是空心圆。</p>
+                            <p>选项A：有4个实心圆，不符合实心圆数量变化规律</p>
+                            <p>选项B：有0个实心圆，不符合实心圆数量变化规律</p>
+                            <p>选项C：有2个实心圆（左上角和右上角），符合实心圆数量变化规律，且左上角确实从空心变为了实心</p>
+                            <p>选项D：有1个实心圆（左上角），不符合实心圆数量变化规律</p>
+                            <p>因此，正确答案是C。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footnote">注：各大模型生成的图形推理题均能符合行测考试标准，展示了它们在此类题型上的生成能力</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

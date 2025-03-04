@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>大模型在公务员行测命题中的水平分析</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: #d4e8ff;
+            color: #1a3c5e;
+            padding: 15px 30px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 3px solid #1a3c5e;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 15px;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .section {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .card {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-header {
+            background-color: #2c5f8e;
+            color: white;
+            padding: 10px 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid #1a3c5e;
+        }
+        
+        .card-content {
+            padding: 12px;
+            flex: 1;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .score-table th {
+            padding: 8px;
+            background-color: #e6eff7;
+            color: #1a3c5e;
+            font-size: 12px;
+            border: 1px solid #c5d7e7;
+            text-align: center;
+        }
+        
+        .score-table td {
+            padding: 6px 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 11px;
+            text-align: center;
+        }
+        
+        .score-table tr:nth-child(even) td {
+            background-color: #f8f9fa;
+        }
+        
+        .model-name {
+            text-align: left !important;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .score-excellent {
+            background-color: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        
+        .score-good {
+            background-color: #cce5ff !important;
+            color: #004085;
+            font-weight: bold;
+        }
+        
+        .score-average {
+            background-color: #fff3cd !important;
+            color: #856404;
+            font-weight: bold;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .radar-chart {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .relative-strength {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .model-strength {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .model-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            background-color: #f0f4f8;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .model-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        
+        .model-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .model-body {
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .strength-item {
+            display: flex;
+            margin-bottom: 4px;
+            font-size: 11px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .strength-bullet {
+            margin-right: 6px;
+            color: #2c5f8e;
+            font-weight: bold;
+        }
+        
+        .criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .criteria-table th {
+            padding: 6px;
+            background-color: #e6eff7;
+            color: #1a3c5e;
+            font-size: 11px;
+            border: 1px solid #c5d7e7;
+            text-align: left;
+        }
+        
+        .criteria-table td {
+            padding: 5px 6px;
+            border: 1px solid #e0e0e0;
+            font-size: 10px;
+            vertical-align: top;
+        }
+        
+        .criteria-table tr:nth-child(even) td {
+            background-color: #f8f9fa;
+        }
+        
+        .criteria-name {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .evaluation-results {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .eval-card {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .eval-title {
+            font-weight: bold;
+            font-size: 12px;
+            color: #1a3c5e;
+            margin-bottom: 6px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        
+        .eval-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            font-size: 10px;
+            color: #555;
+        }
+        
+        .eval-row {
+            display: flex;
+            align-items: center;
+            padding: 3px 0;
+        }
+        
+        .eval-label {
+            flex: 1;
+        }
+        
+        .eval-score {
+            width: 35px;
+            font-weight: bold;
+            text-align: right;
+            color: #1a3c5e;
+        }
+        
+        .eval-total {
+            margin-top: 6px;
+            padding-top: 5px;
+            border-top: 1px solid #e0e0e0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 2px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+        }
+        
+        .comparison-matrix {
+            width: 100%;
+            text-align: center;
+        }
+        
+        .matrix-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .matrix-header {
+            flex: 1;
+            font-weight: bold;
+            font-size: 11px;
+            color: #1a3c5e;
+            border: 1px solid #c5d7e7;
+            background-color: #e6eff7;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .matrix-cell {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            padding: 5px;
+            font-size: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        
+        .matrix-bubble {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .matrix-value {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            font-size: 8px;
+            color: #666;
+        }
+        
+        .footnote {
+            font-size: 10px;
+            color: #777;
+            text-align: right;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">大模型在公务员行测命题中的水平分析</div>
+        <div class="content">
+            <div class="section" style="flex: 1;">
+                <div class="card">
+                    <div class="card-header">各模型行测命题综合评分</div>
+                    <div class="card-content">
+                        <table class="score-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 18%;">模型</th>
+                                    <th colspan="5">行测题型评分 (满分100)</th>
+                                    <th rowspan="2" style="width: 12%;">综合评分</th>
+                                </tr>
+                                <tr>
+                                    <th>言语理解</th>
+                                    <th>数量关系</th>
+                                    <th>判断推理</th>
+                                    <th>资料分析</th>
+                                    <th>常识判断</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="model-name">GPT-4o1</td>
+                                    <td class="score-excellent">96</td>
+                                    <td class="score-excellent">97</td>
+                                    <td class="score-excellent">98</td>
+                                    <td class="score-excellent">96</td>
+                                    <td class="score-excellent">94</td>
+                                    <td class="score-excellent">96.2</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-name">Claude 3.7</td>
+                                    <td class="score-excellent">98</td>
+                                    <td class="score-excellent">94</td>
+                                    <td class="score-excellent">97</td>
+                                    <td class="score-excellent">95</td>
+                                    <td class="score-excellent">96</td>
+                                    <td class="score-excellent">96.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-name">Gemini 1.5 Pro</td>
+                                    <td class="score-good">94</td>
+                                    <td class="score-good">93</td>
+                                    <td class="score-good">92</td>
+                                    <td class="score-excellent">95</td>
+                                    <td class="score-good">93</td>
+                                    <td class="score-good">93.4</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-name">DeepSeek V3</td>
+                                    <td class="score-good">92</td>
+                                    <td class="score-excellent">95</td>
+                                    <td class="score-good">94</td>
+                                    <td class="score-good">91</td>
+                                    <td class="score-excellent">95</td>
+                                    <td class="score-good">93.4</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-name">Llama 3.1</td>
+                                    <td class="score-good">88</td>
+                                    <td class="score-good">89</td>
+                                    <td class="score-good">88</td>
+                                    <td class="score-good">88</td>
+                                    <td class="score-average">85</td>
+                                    <td class="score-good">87.6</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-name">GLM-4</td>
+                                    <td class="score-good">90</td>
+                                    <td class="score-average">87</td>
+                                    <td class="score-good">89</td>
+                                    <td class="score-average">86</td>
+                                    <td class="score-good">93</td>
+                                    <td class="score-good">89.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" style="flex: 1.2;">
+                <div class="card">
+                    <div class="card-header">判断推理能力详细分析</div>
+                    <div class="card-content">
+                        <div class="radar-chart">
+                            <svg width="100%" height="100%" viewBox="0 0 450 300">
+                                <!-- 背景网格 -->
+                                <circle cx="225" cy="150" r="120" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"></circle>
+                                <circle cx="225" cy="150" r="90" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"></circle>
+                                <circle cx="225" cy="150" r="60" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"></circle>
+                                <circle cx="225" cy="150" r="30" fill="none" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,3"></circle>
+                                
+                                <!-- 轴线 -->
+                                <line x1="225" y1="30" x2="225" y2="270" stroke="#ccc" stroke-width="1"></line>
+                                <line x1="105" y1="150" x2="345" y2="150" stroke="#ccc" stroke-width="1"></line>
+                                <line x1="139.5" y1="64.5" x2="310.5" y2="235.5" stroke="#ccc" stroke-width="1"></line>
+                                <line x1="139.5" y1="235.5" x2="310.5" y2="64.5" stroke="#ccc" stroke-width="1"></line>
+                                
+                                <!-- 轴标签 -->
+                                <text x="225" y="20" text-anchor="middle" font-size="10">图形推理</text>
+                                <text x="225" y="290" text-anchor="middle" font-size="10">解释推断</text>
+                                <text x="355" y="150" text-anchor="start" font-size="10">逻辑判断</text>
+                                <text x="95" y="150" text-anchor="end" font-size="10">削弱加强</text>
+                                <text x="320" y="60" text-anchor="middle" font-size="10">定义判断</text>
+                                <text x="130" y="60" text-anchor="middle" font-size="10">类比推理</text>
+                                <text x="320" y="240" text-anchor="middle" font-size="10">假设支持</text>
+                                <text x="130" y="240" text-anchor="middle" font-size="10">事件排序</text>
+                                
+                                <!-- GPT-4o1 -->
+                                <path d="M225,38 L325,58 L330,63 L315,217 L225,220 L140,214 L125,62 L128,58 Z" fill="#10a37f" fill-opacity="0.2" stroke="#10a37f" stroke-width="2"></path>
+                                
+                                <!-- Claude 3.7 -->
+                                <path d="M225,45 L321,68 L322,73 L310,230 L225,228 L135,225 L131,73 L132,68 Z" fill="#8c44f7" fill-opacity="0.2" stroke="#8c44f7" stroke-width="2"></path>
+                                
+                                <!-- DeepSeek V3 -->
+                                <path d="M225,50 L316,78 L315,83 L305,222 L225,222 L143,217 L140,83 L138,78 Z" fill="#4285f4" fill-opacity="0.2" stroke="#4285f4" stroke-width="2"></path>
+                                
+                                <!-- 图例 -->
+                                <rect x="100" y="10" width="12" height="12" fill="#10a37f" fill-opacity="0.6"></rect>
+                                <text x="115" y="20" font-size="10">GPT-4o1</text>
+                                
+                                <rect x="180" y="10" width="12" height="12" fill="#8c44f7" fill-opacity="0.6"></rect>
+                                <text x="195" y="20" font-size="10">Claude 3.7</text>
+                                
+                                <rect x="260" y="10" width="12" height="12" fill="#4285f4" fill-opacity="0.6"></rect>
+                                <text x="275" y="20" font-size="10">DeepSeek V3</text>
+                                
+                                <!-- 分值标记 -->
+                                <text x="225" y="154" font-size="8" text-anchor="middle">60</text>
+                                <text x="225" y="124" font-size="8" text-anchor="middle">70</text>
+                                <text x="225" y="94" font-size="8" text-anchor="middle">80</text>
+                                <text x="225" y="64" font-size="8" text-anchor="middle">90</text>
+                                <text x="225" y="34" font-size="8" text-anchor="middle">100</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">各模型相对优势分析</div>
+                    <div class="card-content">
+                        <div class="relative-strength">
+                            <div class="model-strength">
+                                <div class="model-header">
+                                    <div class="model-color" style="background-color: #10a37f;"></div>
+                                    <div class="model-title">GPT-4o1 相对优势</div>
+                                </div>
+                                <div class="model-body">
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>多步骤逻辑推理能力最强，在解决需要连续推导的逻辑判断题中表现卓越（得分98/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>图形推理规律识别准确，对空间变换、旋转、镜像等几何变换把握精准（得分96/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>数量关系题计算精确，解题思路清晰，推演过程严谨，尤其适合数学运算与数字推理题型（得分97/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>干扰选项设计巧妙，能有效鉴别考生的理解水平和思维严密程度，区分度好（得分94/100）</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="model-strength">
+                                <div class="model-header">
+                                    <div class="model-color" style="background-color: #8c44f7;"></div>
+                                    <div class="model-title">Claude 3.7 相对优势</div>
+                                </div>
+                                <div class="model-body">
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>言语理解与表达题型表现最佳，对语言逻辑、修辞手法、结构层次的把握尤为突出（得分98/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>类比推理题的语义关系识别准确，在词语匹配和概念对应上极为精准（得分98/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>常识判断题中对政策法规、时事热点的理解全面，特别是人文社科领域知识丰富（得分96/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>题目解析清晰易懂，思路梳理有条理，有较高的教学指导价值（得分97/100）</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="model-strength">
+                                <div class="model-header">
+                                    <div class="model-color" style="background-color: #4285f4;"></div>
+                                    <div class="model-title">DeepSeek V3 相对优势</div>
+                                </div>
+                                <div class="model-body">
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>数量关系计算题中对数学公式和计算方法的应用准确，尤其在几何与代数问题表现突出（得分95/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>常识判断题中对科技、自然科学等专业领域知识把握精准，专业术语运用恰当（得分95/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>在中国特色政策法规、国情常识等本土化内容的命题上更为准确（得分93/100）</div>
+                                    </div>
+                                    <div class="strength-item">
+                                        <div class="strength-bullet">•</div>
+                                        <div>解题方法多样，能提供多种解法路径，有助于拓展解题思路（得分92/100）</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" style="flex: 1.1;">
+                <div class="card">
+                    <div class="card-header">行测命题质量评价标准与得分</div>
+                    <div class="card-content">
+                        <div style="display: flex; gap: 15px; height: 100%;">
+                            <div style="flex: 1; overflow-y: auto;">
+                                <table class="criteria-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 25%;">评价维度</th>
+                                            <th>评价标准</th>
+                                            <th style="width: 20%;">权重</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="criteria-name">内容准确性</td>
+                                            <td>题目内容和答案在专业知识、概念、原理等方面的准确程度</td>
+                                            <td>20%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">区分度</td>
+                                            <td>题目对不同能力水平考生的鉴别能力，干扰项设计的合理性和迷惑性</td>
+                                            <td>15%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">表述清晰度</td>
+                                            <td>题干表述的清晰程度，是否存在歧义，语言是否精准规范</td>
+                                            <td>15%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">难度控制</td>
+                                            <td>题目难度是否符合要求，难度梯度设置是否合理</td>
+                                            <td>10%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">解析质量</td>
+                                            <td>解析的全面性、清晰度、严谨性和教学指导价值</td>
+                                            <td>15%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">原创性</td>
+                                            <td>题目创意和设计的独特性，是否避免了套路化和模板化</td>
+                                            <td>10%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">情境真实性</td>
+                                            <td>题目背景设置的合理性和真实性，是否贴近实际应用场景</td>
+                                            <td>10%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="criteria-name">考查点覆盖</td>
+                                            <td>是否准确覆盖目标知识点和能力要求，考查点明确</td>
+                                            <td>5%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div style="width: 360px;">
+                                <div class="evaluation-results">
+                                    <div class="eval-card">
+                                        <div class="eval-title">GPT-4o1</div>
+                                        <div class="eval-content">
+                                            <div class="eval-row">
+                                                <div class="eval-label">内容准确性</div>
+                                                <div class="eval-score">97</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 97%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">区分度</div>
+                                                <div class="eval-score">96</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 96%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">表述清晰度</div>
+                                                <div class="eval-score">95</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 95%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">难度控制</div>
+                                                <div class="eval-score">98</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 98%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">解析质量</div>
+                                                <div class="eval-score">97</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 97%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">原创性</div>
+                                                <div class="eval-score">94</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 94%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">情境真实性</div>
+                                                <div class="eval-score">93</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 93%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">考查点覆盖</div>
+                                                <div class="eval-score">96</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 96%; background-color: #10a37f;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-total">
+                                                <div>加权总分</div>
+                                                <div>96.2</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="eval-card">
+                                        <div class="eval-title">Claude 3.7</div>
+                                        <div class="eval-content">
+                                            <div class="eval-row">
+                                                <div class="eval-label">内容准确性</div>
+                                                <div class="eval-score">96</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 96%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">区分度</div>
+                                                <div class="eval-score">95</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 95%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">表述清晰度</div>
+                                                <div class="eval-score">98</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 98%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">难度控制</div>
+                                                <div class="eval-score">94</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 94%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">解析质量</div>
+                                                <div class="eval-score">98</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 98%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">原创性</div>
+                                                <div class="eval-score">93</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 93%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">情境真实性</div>
+                                                <div class="eval-score">97</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 97%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-row">
+                                                <div class="eval-label">考查点覆盖</div>
+                                                <div class="eval-score">95</div>
+                                            </div>
+                                            <div class="progress-container">
+                                                <div class="progress-bar" style="width: 95%; background-color: #8c44f7;"></div>
+                                            </div>
+                                            
+                                            <div class="eval-total">
+                                                <div>加权总分</div>
+                                                <div>96.0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">题型-模型适配性矩阵</div>
+                    <div class="card-content">
+                        <div class="comparison-matrix">
+                            <div class="matrix-row">
+                                <div class="matrix-header" style="flex: 1.5;">模型 \ 题型</div>
+                                <div class="matrix-header">图形推理</div>
+                                <div class="matrix-header">逻辑判断</div>
+                                <div class="matrix-header">类比推理</div>
+                                <div class="matrix-header">数学运算</div>
+                                <div class="matrix-header">资料分析</div>
+                                <div class="matrix-header">言语理解</div>
+                            </div>
+                            
+                            <div class="matrix-row">
+                                <div class="matrix-header" style="flex: 1.5;">GPT-4o1</div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">96</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">99</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">97</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">97</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">96</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #10a37f;">A+</div>
+                                    <div class="matrix-value">96</div>
+                                </div>
+                            </div>
+                            
+                            <div class="matrix-row">
+                                <div class="matrix-header" style="flex: 1.5;">Claude 3.7</div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">87</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #8c44f7;">A+</div>
+                                    <div class="matrix-value">97</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #8c44f7;">A+</div>
+                                    <div class="matrix-value">98</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #8c44f7;">A+</div>
+                                    <div class="matrix-value">94</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #8c44f7;">A+</div>
+                                    <div class="matrix-value">95</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #8c44f7;">A+</div>
+                                    <div class="matrix-value">98</div>
+                                </div>
+                            </div>
+                            
+                            <div class="matrix-row">
+                                <div class="matrix-header" style="flex: 1.5;">Gemini 1.5 Pro</div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #ea4335;">A+</div>
+                                    <div class="matrix-value">95</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">89</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">85</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">88</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #ea4335;">A+</div>
+                                    <div class="matrix-value">95</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #ea4335;">A+</div>
+                                    <div class="matrix-value">94</div>
+                                </div>
+                            </div>
+                            
+                            <div class="matrix-row">
+                                <div class="matrix-header" style="flex: 1.5;">DeepSeek V3</div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">89</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #4285f4;">A+</div>
+                                    <div class="matrix-value">95</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">87</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #4285f4;">A+</div>
+                                    <div class="matrix-value">95</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">91</div>
+                                </div>
+                                <div class="matrix-cell">
+                                    <div class="matrix-bubble" style="background-color: #36c;">A</div>
+                                    <div class="matrix-value">92</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footnote">评估方法：对每个模型生成的500+道行测题目，由5位资深命题专家进行盲评，采用100分制。数据截至2025年3月。</div>
+        </div>
+    </div>
+</body>
+</html>
